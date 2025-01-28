@@ -1,0 +1,114 @@
+Author: Sammy Twenhafel
+
+**Abstract:**
+
+This is a technical blog post of **both** an HTML file *and* [.qmd file](src/wine_of_pnw.qmd) hosted on GitHub pages.
+
+# Setup
+
+1.  Get your [GitHub Pages](https://docs.github.com/en/pages/quickstart) ready.
+
+**Step Up Code:**
+
+```{r}
+library(tidyverse)
+library(moderndive)
+library(caret)
+library(dslabs)
+
+wine <- readRDS(gzcon(url("https://github.com/cd-public/D505/raw/master/dat/wine.rds"))) %>%
+  filter(province=="Oregon" | province=="California" | province=="New York") %>% 
+  mutate(cherry=as.integer(str_detect(description,"[Cc]herry"))) %>% 
+  mutate(lprice=log(price)) %>% 
+  select(lprice, points, cherry, province)
+```
+
+**Explanataion:** \> [TODO]{style="color:red;font-weight:bold"}: *write your line-by-line explanation of the code here* The first line of code is reading in the wine dataset. Then the code is filtering the province column so that the only provinces are Oregon or California or New York. Next it is mutating the cherry column to an integer, and the integer is decided by detecting the string cherry in the description column. 1 means that cherry was detected and 0 means that cherry was not detected. Then a new column is being created called lprice, this is taking the logarithm of the numbers in the price column. Finally it is selecting the columns that we need, which are the lprice, points, cherry and the province columns.
+
+# Multiple Regression
+
+## Linear Models
+
+First run a linear regression model with log of price as the dependent variable and 'points' and 'cherry' as features (variables).
+
+```{r}
+ m1 <- lm(lprice ~ points + cherry, data = wine)
+get_regression_summaries(m1)
+```
+
+**Explanataion:**
+
+> [TODO]{style="color:red;font-weight:bold"}: *write your line-by-line explanation of the code here*
+>
+> This created a new model called m1. This model is predicting the log of the price based off the points column and the cherry column.
+
+> [TODO]{style="color:red;font-weight:bold"}: *report and explain the RMSE*
+>
+> The RMSE was 0.4687, which means that on average the potins were 0.4687 away from the prediction line.
+
+## Interaction Models
+
+Add an interaction between 'points' and 'cherry'.
+
+```{r}
+m2 <- lm(lprice ~ points * cherry, data = wine)
+get_regression_summaries(m2)
+
+get_regression_table(m2)
+```
+
+> [TODO]{style="color:red;font-weight:bold"}: *write your line-by-line explanation of the code here*
+>
+> For m2 to add an interaction between points and cherry, I changed the plus symbol to an asterisk.
+
+> [TODO]{style="color:red;font-weight:bold"}: *report and explain the RMSE* The RMSE was 0.4685. Instead of predicting the log price separately this number now refers to how on average points and cherry together was 0.4685 away from the predicted log price.
+
+### The Interaction Variable
+
+> [TODO]{style="color:red;font-weight:bold"}: *interpret the coefficient on the interaction variable.* <br>[Explain as you would to a non-technical manager.](https://youtube.com/clip/UgkxY7ohjoimIef6zpPLjgQHqJcJHeZptuVm?feature=shared)
+>
+> The coefficient on the interaction variable is 0.013. This means that when looking at an increase of one the interaction
+
+## Applications
+
+Determine which province (Oregon, California, or New York), does the 'cherry' feature in the data affect price most?
+
+```{r}
+
+```
+
+> [TODO]{style="color:red;font-weight:bold"}: *write your line-by-line explanation of the code here, and explain your answer.*
+
+# Scenarios
+
+## On Accuracy
+
+Imagine a model to distinguish New York wines from those in California and Oregon. After a few days of work, you take some measurements and note: "I've achieved 91% accuracy on my model!"
+
+Should you be impressed? Why or why not?
+
+```{r}
+wine%>%
+  group_by(province)%>%
+  summarise(n= n())
+```
+
+> [TODO]{style="color:red;font-weight:bold"}: *describe your reasoning here*
+>
+> No you should not be impressed. This is because The wines in the dataset are not make up 91% wines from New York but instead 8.89%, which means you should be expecting the accuracy of the model to be around 9%.
+
+## On Ethics
+
+Why is understanding this vignette important to use machine learning in an ethical manner?
+
+> [TODO]{style="color:red;font-weight:bold"}: *describe your reasoning here*
+>
+> This example shows us that not all data is going to be representative of the reality and that our models can lead to mistakes. It is important to know what is at stake because we may be doing work where our actions will have more weight to them.
+
+## Ignorance is no excuse
+
+Imagine you are working on a model to predict the likelihood that an individual loses their job as the result of the changing federal policy under new presidential administrations. You have a very large dataset with many hundreds of features, but you are worried that including indicators like age, income or gender might pose some ethical problems. When you discuss these concerns with your boss, she tells you to simply drop those features from the model. Does this solve the ethical issue? Why or why not?
+
+> [TODO]{style="color:red;font-weight:bold"}: *describe your reasoning here*
+>
+> No because some of those factors are already discriminated against so they should be apart of the conversation. When people of a certain gender or age are more likely to lose their job in the first place removing those factors is making it random, when in reality they should be protected more because they are targeted more.
