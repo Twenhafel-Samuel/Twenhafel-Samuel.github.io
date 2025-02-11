@@ -42,7 +42,7 @@ wine <- readRDS(gzcon(url("https://github.com/cd-public/D505/raw/master/dat/pino
 
 > [TODO]{style="color:red;font-weight:bold"}: *Explain how the choice of K affects the quality of your prediction when using a* $K$ Nearest Neighbors algorithm.
 >
-> When a small number is chosen for the K, it makes it can make the model incredibly simple and may not take into account some nuisances of the model. As we saw in class a smaller K can lead to over fitting the data and lean too heavily on one of the features apart of the KNN model. As the K gets larger, more and more featyres may be considered when making the prediction. A larger value can normalize the model because it is looking at more points before making a prediction.
+> When a small number is chosen for the K, it makes it can make the model incredibly simple and may not take into account some nuiances of the model. As we saw in class a smaller K can lead to over fitting the data and lean too heavily on one of the features apart of the KNN model. As the K gets larger, more and more features may be considered when making the prediction. A larger value can normalize the model because it is looking at more points before making a prediction.
 
 ## 3. Feature Engineering
 
@@ -109,15 +109,22 @@ wine_index <- createDataPartition(wino$province, p = 0.8, list = FALSE)
 train <- wino[ wine_index, ]
 test <- wino[-wine_index, ]
 
-control <- rfeControl(functions = rfFuncs, method = "cv", number = 5)
+#control <- rfeControl(functions = rfFuncs, method = "cv", number = 5)
 
-fit <- knn(
-  train = select(train,-province), 
-  test = select(test,-province), 
-  k=15, 
-  cl = train$province)
+#fit <- knn(
+  #train = select(train,-province), 
+  #test = select(test,-province), 
+ # k=15, 
+ # cl = train$province)
 
-confusionMatrix(fit,factor(test$province))
+fit <- train(province ~ .,
+             data = train, 
+             method = "knn",
+             tuneLength = 15,
+             trControl = trainControl( method = "cv", number = 5))
+
+confusionMatrix(predict(fit, test),factor(test$province))
+
 
 ```
 
