@@ -150,4 +150,4 @@ plot(myRoc)
 auc(myRoc)
 ```
 
-> [TODO]{style="color:red;font-weight:bold"}: *The dashed line under the ROC curve indicates a random guess, and to the left of that line are better classifications and the area under the curve indicates the correctness of the model. The area under the curve for this model was 0.90, which is 0.90 better than just random guessing.*
+> [TODO]{style="color:red;font-weight:bold"}: *The dashed line under the ROC curve indicates a random guess, and to the left of that line are better classifications and the area under the curve indicates the correctness of the model. The area under the curve for this model was 0.90, which is 0.40 better than just random guessing.*
